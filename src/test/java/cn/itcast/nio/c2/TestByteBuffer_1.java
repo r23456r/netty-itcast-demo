@@ -37,8 +37,6 @@ public class TestByteBuffer_1 {
                 // 切换到写模式，实测否则一直循环读
                 buffer.clear();
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
