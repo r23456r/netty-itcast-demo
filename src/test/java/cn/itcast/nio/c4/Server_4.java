@@ -5,16 +5,19 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
 import static cn.itcast.nio.c2.ByteBufferUtil.debugRead;
 
 /**
- * 读取事件的处理  第一章28 空指针异常版本，用iter.remove解决。
+ * 读取事件的处理  第一章28 空指针异常版本
  */
 @Slf4j
-public class Server_3 {
+public class Server_4 {
 
     public static void main(String[] args) throws IOException {
 
@@ -41,8 +44,6 @@ public class Server_3 {
             Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
             while (iterator.hasNext()) {
                 SelectionKey key = iterator.next();
-                //6. 必须从keys中移除
-                iterator.remove();
                 log.info("registed key----{}", key);
                 // 5. 区分事件类型
 
@@ -57,15 +58,18 @@ public class Server_3 {
                     scKey.interestOps(SelectionKey.OP_READ);
                     log.info("connected------{}", sc);
                 } else if (key.isReadable()) {
-                    SocketChannel channel = (SocketChannel) key.channel(); //拿到触发读事件的channel
-                    ByteBuffer buffer = ByteBuffer.allocate(16);
-                    channel.read(buffer);
-                    buffer.flip();
-                    debugRead(buffer);
+                    try {
+                        SocketChannel channel = (SocketChannel) key.channel(); //拿到触发读事件的channel
+                        ByteBuffer buffer = ByteBuffer.allocate(16);
+                        channel.read(buffer);
+                        buffer.flip();
+                        debugRead(buffer);
+                    } catch (IOException e) {
+//                        log.info("客户端GG");
+                        key.cancel();
+                    }
 
                 }
-
-
             }
         }
     }
