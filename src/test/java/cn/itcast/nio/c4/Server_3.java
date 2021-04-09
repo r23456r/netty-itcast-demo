@@ -6,15 +6,15 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 import static cn.itcast.nio.c2.ByteBufferUtil.debugRead;
 
+/**
+ * 读取事件的处理  第一章28 空指针异常版本
+ */
 @Slf4j
-public class Server_2 {
+public class Server_3 {
 
     public static void main(String[] args) throws IOException {
 
@@ -42,12 +42,27 @@ public class Server_2 {
             while (iterator.hasNext()) {
                 SelectionKey key = iterator.next();
                 log.info("registed key----{}", key);
-//                ServerSocketChannel channel = (ServerSocketChannel) key.channel();
-                //accept方法代表对事件处理了，如果不处理，
-//                SocketChannel sc = channel.accept();
-//                log.info("connected------{}", sc);
-                // 拿到事件，但不处理了
-                key.cancel();
+                // 5. 区分事件类型
+
+                if (key.isAcceptable()) {
+                    ServerSocketChannel channel = (ServerSocketChannel) key.channel();
+                    //accept方法代表对事件处理了，如果不处理，
+                    SocketChannel sc = channel.accept();
+                    //和Server_2 不同，因为selector都是和非阻塞模式一起用的
+                    sc.configureBlocking(false);
+                    //把sc也注册给selector，以达成事件驱动
+                    SelectionKey scKey = sc.register(selector, 0, null);
+                    scKey.interestOps(SelectionKey.OP_READ);
+                    log.info("connected------{}", sc);
+                } else if (key.isReadable()) {
+                    SocketChannel channel = (SocketChannel) key.channel(); //拿到触发读事件的channel
+                    ByteBuffer buffer = ByteBuffer.allocate(16);
+                    channel.read(buffer);
+                    buffer.flip();
+                    debugRead(buffer);
+
+                }
+
 
             }
         }
