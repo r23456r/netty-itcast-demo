@@ -14,10 +14,10 @@ import java.util.Iterator;
 import static cn.itcast.nio.c2.ByteBufferUtil.debugRead;
 
 /**
- * 读取事件的处理  第一章28 空指针异常版本
+ * 读取事件的处理  第一章28 正常断开channel.close()和异常断开
  */
 @Slf4j
-public class Server_4 {
+public class Server_5 {
 
     public static void main(String[] args) throws IOException {
 
@@ -62,14 +62,16 @@ public class Server_4 {
                     try {
                         SocketChannel channel = (SocketChannel) key.channel(); //拿到触发读事件的channel
                         ByteBuffer buffer = ByteBuffer.allocate(16);
-                        channel.read(buffer);
-                        buffer.flip();
-                        debugRead(buffer);
+                        int read = channel.read(buffer);//如果正常断开（clientChannel.close()的方式），返回-1
+                        if (read == -1) {
+                            key.cancel();
+                        } else {
+                            buffer.flip();
+                            debugRead(buffer);
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
 //                        log.info("客户端GG");
-                        key.cancel();
-                    }finally {
                         key.cancel();
                     }
 
