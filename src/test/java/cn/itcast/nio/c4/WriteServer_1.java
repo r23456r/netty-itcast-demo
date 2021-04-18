@@ -1,0 +1,50 @@
+package cn.itcast.nio.c4;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
+import java.util.Iterator;
+
+public class WriteServer_1 {
+    public static void main(String[] args) throws IOException {
+        ServerSocketChannel ssc = ServerSocketChannel.open();
+        ssc.configureBlocking(false);
+
+        Selector selector = Selector.open();
+        ssc.register(selector, SelectionKey.OP_ACCEPT);
+        ssc.bind(new InetSocketAddress(8080));
+        while (true) {
+            selector.select();
+            Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+            while (iterator.hasNext()) {
+                SelectionKey key = iterator.next();
+                iterator.remove();
+                if (key.isAcceptable()) {
+                    //省略了ssc.channel(),因为我们只有一个ServerSocket
+                    SocketChannel sc = ssc.accept();
+                    sc.configureBlocking(false);
+                    sc.register(selector, 0, null);
+
+                    // 1.向客户端发送大量数据
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < 30000000; i++) {
+                        sb.append("a");
+                    }
+                    ByteBuffer byteBuffer = Charset.defaultCharset().encode(sb.toString());
+                    //这里的问题：写入过多，以及while写循环阻塞资源。
+                    while (byteBuffer.hasRemaining()) {
+                        //2.返回值代表实际写入的字节数
+                        int write = sc.write(byteBuffer);
+                        System.out.println(write);
+                    }
+
+                }
+            }
+        }
+    }
+}
