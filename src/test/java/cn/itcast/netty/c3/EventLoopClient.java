@@ -41,7 +41,7 @@ public class EventLoopClient {
             // 在 nio 线程连接建立好之后，会调用 operationComplete
             public void operationComplete(ChannelFuture future) throws Exception {
                 Channel channel = future.channel();
-                log.debug("{}", channel);
+                log.info("{}", channel);
                 channel.writeAndFlush("hello, world");
             }
         });

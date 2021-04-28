@@ -27,7 +27,7 @@ public class EventLoopServer {
                             @Override                                         // ByteBuf
                             public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
                                 ByteBuf buf = (ByteBuf) msg;
-                                log.debug(buf.toString(Charset.defaultCharset()));
+                                log.info(buf.toString(Charset.defaultCharset()));
                                 ctx.fireChannelRead(msg); // 让消息传递给下一个handler
                             }
                         });
@@ -40,6 +40,6 @@ public class EventLoopServer {
                         });*/
                     }
                 })
-                .bind(8080);
+                .bind(8081);
     }
 }
