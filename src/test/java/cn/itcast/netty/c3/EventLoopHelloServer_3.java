@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 /**
- * IO太慢，会阻塞worker线程
+ * IO太慢，会阻塞worker线程，创建独立的group处理长时间的任务
  */
 @Slf4j
 public class EventLoopHelloServer_3 {
