@@ -30,7 +30,15 @@ public class EventLoopHelloServer_3 {
                             @Override
                             protected void initChannel(NioSocketChannel ch) throws Exception {
                                 ch.pipeline().addLast(new StringDecoder());
-                                ch.pipeline().addLast(group, "handler1", new ChannelInboundHandlerAdapter() {
+                                ch.pipeline().addLast("handler1", new ChannelInboundHandlerAdapter() {
+                                    @Override
+                                    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                        System.out.println("msg: " + msg);
+                                        Thread.sleep(1000);
+                                        System.out.println("睡醒了");
+
+                                    }
+                                }).addLast(group, "handler1", new ChannelInboundHandlerAdapter() {
                                     @Override
                                     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
                                         System.out.println("msg: " + msg);
