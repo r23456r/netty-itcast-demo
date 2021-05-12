@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 public class TestNettyPromise_1 {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        DefaultPromise<Integer> promise = new DefaultPromise<>();
+//        DefaultPromise<Integer> promise = new DefaultPromise<>();
 
     }
 
