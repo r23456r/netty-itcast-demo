@@ -13,6 +13,7 @@ public class TestSlice {
 
         // 在切片过程中，没有发生数据复制
         ByteBuf f1 = buf.slice(0, 5);
+        //可能引发内存泄漏，GC对计数器不感知，导致GC后，原本池里的内存无法归还回去
         f1.retain();
         // 'a','b','c','d','e', 'x'
         ByteBuf f2 = buf.slice(5, 5);
