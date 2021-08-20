@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBufAllocator;
 import static cn.itcast.netty.c4.TestByteBuf.log;
 
 public class TestSlice {
+    //2021年8月20日 16:19:27 test push
     public static void main(String[] args) {
         ByteBuf buf = ByteBufAllocator.DEFAULT.buffer(10);
         buf.writeBytes(new byte[]{'a','b','c','d','e','f','g','h','i','j'});
