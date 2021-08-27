@@ -26,7 +26,8 @@ public class TestLengthFieldDecoder {
         byte[] bytes = content.getBytes(); // 实际内容
         int length = bytes.length; // 实际内容长度
         buffer.writeInt(length);
-        buffer.writeByte(1);
+        //额外增加内容，比如版本号为1
+        buffer.writeByte('1');
         buffer.writeBytes(bytes);
     }
 }
